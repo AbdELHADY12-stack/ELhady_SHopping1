@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>ELHADY Shopping</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+font-family: Arial;
+margin:0;
+background: linear-gradient(270deg,#0f2027,#203a43,#2c5364);
+background-size:600% 600%;
+animation:bg 10s infinite;
+color:white;
+text-align:center;
+}
+@keyframes bg{
+0%{background-position:0%}
+50%{background-position:100%}
+100%{background-position:0%}
+}
+.banner{
+width:100%;
+height:300px;
+object-fit:cover;
+animation:zoom 6s infinite alternate;
+}
+@keyframes zoom{
+from{transform:scale(1);}
+to{transform:scale(1.1);}
+}
+.products{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+}
+.product{
+width:280px;
+margin:20px;
+background:rgba(255,255,255,0.1);
+padding:15px;
+border-radius:15px;
+backdrop-filter: blur(10px);
+transition:.5s;
+}
+.product:hover{transform:scale(1.05);}
+.product img{width:100%;height:200px;border-radius:10px;}
+button{
+background:#28a745;color:white;border:none;padding:10px;width:100%;border-radius:5px;margin-top:5px;cursor:pointer;
+}
+.delete{background:red;}
+.cash{background:orange;}
+.admin{display:none;background:#111;padding:20px;margin:20px;border-radius:10px;}
+input{width:100%;padding:10px;margin:5px;border:none;border-radius:5px;}
+.cart{position:fixed;top:20px;left:20px;background:rgba(255,255,255,0.1);padding:15px;border-radius:10px;width:220px;}
+</style>
+</head>
+<body>
+
+<h1>🛒 ELHADY Shopping</h1>
+
+<!-- تسجيل دخول -->
+<div>
+<input id="user" placeholder="user">
+<input id="pass" type="password" placeholder="pass">
+<button onclick="login()">دخول</button>
+</div>
+
+<!-- بانر -->
+<img src="صورة البانر.jpeg" class="banner">
+
+<a href="https://t.me/elhady_trade" target="_blank">📢 جروب التليجرام</a>
+
+<!-- الأدمن -->
+<div class="admin" id="admin">
+<h2>👑 لوحة التحكم</h2>
+<input id="name" placeholder="اسم المنتج">
+<input id="price" placeholder="السعر">
+<input id="img" placeholder="لينك صورة المنتج">
+<button onclick="add()">➕ إضافة</button>
+</div>
+
+<!-- السلة -->
+<div class="cart">
+<p id="items">0</p>
+<p id="total">0 جنيه</p>
+<button onclick="order()">📲 واتساب</button>
+<button class="cash" onclick="cash()">💰 اتصالات كاش</button>
+</div>
+
+<!-- المنتجات -->
+<div class="products" id="products"></div>
+
+<script>
+let adminUser="admin", adminPass="1234";
+
+function login(){
+let u=user.value, p=pass.value;
+if(u===adminUser && p===adminPass){
+admin.style.display="block"; alert("👑 أدمن");
+}else{alert("👤 مستخدم");}
+}
+
+// المنتجات
+function add(){
+let products=JSON.parse(localStorage.getItem("p")||"[]");
+products.push({name:name.value,price:price.value,img:img.value});
+localStorage.setItem("p",JSON.stringify(products));
+show();
+}
+function del(i){
+let p=JSON.parse(localStorage.getItem("p"));
+p.splice(i,1);
+localStorage.setItem("p",JSON.stringify(p));
+show();
+}
+function show(){
+let data=JSON.parse(localStorage.getItem("p")||"[]");
+products.innerHTML="";
+data.forEach((x,i)=>{
+products.innerHTML+=`
+<div class="product">
+<img src="${x.img}">
+<h3>${x.name}</h3>
+<p>${x.price} جنيه</p>
+<button onclick="addCart('${x.name}',${x.price})">شراء</button>
+<button class="delete" onclick="del(${i})">حذف</button>
+</div>`;
+});
+}
+
+// السلة
+let total=0, items=0, text="";
+let itemsEl=document.getElementById("items"), totalEl=document.getElementById("total");
+function addCart(n,p){items++; total+=Number(p); text+=n+"\\n"; itemsEl.innerHTML=items; totalEl.innerHTML=total+" جنيه";}
+function order(){let msg="طلب:\\n"+text+"المجموع: "+total+" جنيه\\nالدفع عبر اتصالات كاش: 01143681480"; window.open("https://wa.me/201143973724?text="+encodeURIComponent(msg));}
+function cash(){alert("💰 حول على اتصالات كاش: 01143681480");}
+
+// تشغيل
+show();
+</script>
+</body>
+</html>
